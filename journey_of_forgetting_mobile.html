@@ -1,0 +1,536 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600&display=swap');
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+
+  html,body{width:100%;min-height:100%;overflow-x:hidden;}
+
+  #app{
+    width:100%;
+    min-height:100dvh;
+    background:radial-gradient(ellipse at 50% 0%,#1a0f00 0%,#0a0600 40%,#000 100%);
+    border-radius:12px;
+    overflow-x:hidden;
+    position:relative;
+    font-family:'Cormorant Garamond',Georgia,serif;
+    color:#E8C06A;
+  }
+
+  .stars{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+  .star{position:absolute;background:#E8C06A;border-radius:50%;animation:twinkle 3s infinite alternate;}
+  @keyframes twinkle{0%{opacity:.06}100%{opacity:.4}}
+
+  .content{
+    position:relative;z-index:2;
+    width:100%;
+    max-width:640px;
+    margin:0 auto;
+    padding:40px 20px 56px;
+    display:flex;flex-direction:column;align-items:center;
+  }
+
+  /* ── INTRO ── */
+  .eye-svg{width:60px;height:auto;margin-bottom:12px;}
+
+  .title-main{
+    font-family:'Cinzel Decorative',serif;
+    font-size:clamp(17px,5vw,24px);
+    font-weight:700;color:#C9963A;
+    letter-spacing:2px;text-align:center;line-height:1.35;
+    text-shadow:0 0 60px rgba(201,150,58,.4),0 0 20px rgba(201,150,58,.2);
+  }
+  .title-sub{
+    font-family:'Cinzel',serif;font-size:clamp(8px,2.2vw,10px);
+    letter-spacing:5px;color:rgba(201,150,58,.4);
+    margin-top:6px;text-align:center;
+  }
+  .gold-line{
+    width:min(200px,60vw);height:1px;
+    background:linear-gradient(90deg,transparent,#C9963A,transparent);
+    margin:16px auto;
+  }
+  .intro-text{
+    font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;
+    font-size:clamp(15px,4vw,17px);color:rgba(232,192,106,.6);
+    text-align:center;width:100%;line-height:1.95;margin-bottom:32px;
+  }
+
+  /* ── BUTTONS ── */
+  .begin-btn{
+    font-family:'Cinzel',serif;font-size:clamp(10px,3vw,12px);font-weight:600;
+    letter-spacing:3px;color:#000;
+    background:linear-gradient(135deg,#E8C06A 0%,#C9963A 55%,#A87928 100%);
+    border:none;
+    padding:14px clamp(24px,7vw,52px);
+    cursor:pointer;border-radius:40px;text-transform:uppercase;
+    transition:transform .3s,box-shadow .3s;
+    box-shadow:0 8px 32px rgba(201,150,58,.5),0 2px 8px rgba(0,0,0,.8);
+    width:min(280px,80vw);
+    touch-action:manipulation;
+  }
+  .begin-btn:hover{transform:translateY(-3px);box-shadow:0 14px 44px rgba(201,150,58,.65),0 4px 16px rgba(0,0,0,.8);}
+  .begin-btn:active{transform:translateY(0);box-shadow:0 4px 16px rgba(201,150,58,.4);}
+
+  /* ── NUMBERS ── */
+  .phase-label{
+    font-family:'Cinzel',serif;font-size:clamp(8px,2.5vw,10px);
+    letter-spacing:4px;color:rgba(201,150,58,.4);
+    margin-bottom:22px;text-transform:uppercase;text-align:center;
+  }
+  .numbers-grid{
+    display:flex;gap:10px;flex-wrap:wrap;
+    justify-content:center;margin-bottom:32px;
+    width:100%;
+  }
+  .num-card{
+    width:clamp(58px,18vw,72px);height:clamp(58px,18vw,72px);
+    border:1px solid rgba(201,150,58,.25);border-radius:14px;
+    display:flex;align-items:center;justify-content:center;
+    flex-direction:column;gap:2px;
+    background:rgba(201,150,58,.04);
+    box-shadow:0 4px 20px rgba(0,0,0,.7);
+    animation:riseIn .5s ease forwards;opacity:0;
+  }
+  @keyframes riseIn{0%{opacity:0;transform:translateY(12px)}100%{opacity:1;transform:translateY(0)}}
+  .num-card .num{font-family:'Cinzel Decorative',serif;font-size:clamp(14px,4.5vw,19px);font-weight:700;color:#C9963A;}
+  .num-card .num-label{font-family:'Cormorant Garamond',serif;font-size:clamp(7px,2vw,9px);color:rgba(201,150,58,.38);letter-spacing:.5px;}
+
+  .proceed-btn{
+    font-family:'Cinzel',serif;font-size:clamp(9px,2.5vw,11px);
+    letter-spacing:3px;color:#C9963A;
+    background:transparent;border:1px solid rgba(201,150,58,.35);
+    padding:13px clamp(20px,6vw,38px);
+    cursor:pointer;border-radius:40px;transition:all .3s;text-transform:uppercase;
+    box-shadow:0 4px 20px rgba(0,0,0,.6);
+    touch-action:manipulation;
+  }
+  .proceed-btn:hover{background:rgba(201,150,58,.09);border-color:#C9963A;transform:translateY(-2px);}
+  .proceed-btn:active{transform:translateY(0);}
+
+  /* ── PHASES ── */
+  .quiz-phase,.q-numbers-phase,.results-phase{
+    display:none;flex-direction:column;align-items:center;width:100%;
+  }
+
+  /* ── PROGRESS ── */
+  .progress-row{display:flex;align-items:center;gap:8px;margin-bottom:22px;flex-wrap:wrap;justify-content:center;}
+  .progress-dot{
+    width:8px;height:8px;border-radius:50%;
+    border:1px solid rgba(201,150,58,.3);background:transparent;transition:all .3s;
+  }
+  .progress-dot.done{background:#C9963A;border-color:#C9963A;}
+  .progress-dot.active{border-color:#C9963A;box-shadow:0 0 8px rgba(201,150,58,.7);}
+
+  /* ── QUESTION ── */
+  .q-section-label{
+    font-family:'Cormorant Garamond',serif;font-style:italic;
+    font-size:clamp(11px,3vw,13px);letter-spacing:1.5px;
+    color:rgba(201,150,58,.4);margin-bottom:6px;text-align:center;
+    width:100%;
+  }
+  .q-number-display{
+    font-family:'Cinzel Decorative',serif;
+    font-size:clamp(32px,10vw,50px);font-weight:700;
+    color:rgba(201,150,58,.06);line-height:1;
+    margin-bottom:-8px;align-self:flex-start;
+  }
+  .q-text{
+    font-family:'Cormorant Garamond',serif;font-weight:500;
+    font-size:clamp(15px,4.2vw,18px);color:#E8C06A;
+    line-height:1.75;margin-bottom:22px;
+    text-align:center;width:100%;
+  }
+
+  /* ── CHOICES ── */
+  .choices-list{width:100%;display:flex;flex-direction:column;gap:9px;margin-bottom:18px;}
+
+  .choice-btn{
+    display:flex;align-items:center;gap:12px;
+    padding:14px 16px;
+    border:1px solid rgba(201,150,58,.15);border-radius:14px;
+    background:rgba(255,255,255,.02);
+    cursor:pointer;text-align:left;
+    transition:border-color .25s,background .25s,box-shadow .25s,transform .2s;
+    width:100%;
+    box-shadow:0 2px 14px rgba(0,0,0,.55);
+    position:relative;overflow:hidden;
+    -webkit-tap-highlight-color:transparent;
+    touch-action:manipulation;
+    min-height:52px;
+  }
+  .choice-btn:active{transform:scale(.985);}
+  .choice-btn.selected{
+    border-color:#C9963A;background:rgba(0,0,0,.4);
+    box-shadow:0 0 0 1px rgba(201,150,58,.5),0 6px 28px rgba(201,150,58,.18),inset 0 1px 0 rgba(201,150,58,.1);
+  }
+  .choice-btn.selected::after{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(135deg,rgba(201,150,58,.1) 0%,rgba(201,150,58,.03) 60%,transparent 100%);
+    border-radius:14px;pointer-events:none;
+  }
+
+  .choice-letter{
+    font-family:'Cinzel',serif;font-size:clamp(10px,2.5vw,11px);font-weight:600;
+    color:rgba(201,150,58,.45);min-width:18px;flex-shrink:0;
+    letter-spacing:1px;transition:color .25s;
+  }
+  .choice-btn.selected .choice-letter{color:#E8C06A;}
+
+  .choice-text{
+    font-family:'Cormorant Garamond',serif;
+    font-size:clamp(14px,3.8vw,16px);font-weight:400;
+    color:rgba(232,192,106,.55);line-height:1.55;
+    text-transform:capitalize;transition:color .25s;
+    flex:1;
+  }
+  .choice-btn.selected .choice-text{font-weight:500;color:#E8C06A;}
+
+  .choice-check{
+    width:18px;height:18px;border-radius:50%;flex-shrink:0;
+    background:linear-gradient(135deg,#E8C06A,#A87928);
+    display:flex;align-items:center;justify-content:center;
+    transform:scale(0);
+    transition:transform .25s cubic-bezier(.34,1.56,.64,1);
+    box-shadow:0 2px 8px rgba(201,150,58,.4);
+  }
+  .choice-check::after{content:'';width:5px;height:8px;border-right:2px solid #000;border-bottom:2px solid #000;transform:rotate(45deg) translate(-1px,-1px);}
+  .choice-btn.selected .choice-check{transform:scale(1);}
+
+  .no-answer-msg{
+    font-family:'Cormorant Garamond',serif;font-style:italic;
+    font-size:clamp(12px,3vw,13px);color:rgba(201,150,58,.4);
+    text-align:center;display:none;margin-bottom:10px;width:100%;
+  }
+  .no-answer-msg.show{display:block;}
+
+  /* ── NAV ── */
+  .nav-row{display:flex;gap:10px;justify-content:center;margin-top:6px;width:100%;}
+  .nav-btn{
+    font-family:'Cinzel',serif;font-size:clamp(9px,2.5vw,10px);
+    letter-spacing:2px;color:#C9963A;
+    background:transparent;border:1px solid rgba(201,150,58,.3);
+    padding:12px clamp(18px,5vw,28px);
+    cursor:pointer;border-radius:40px;transition:all .25s;text-transform:uppercase;
+    box-shadow:0 4px 18px rgba(0,0,0,.6);flex:1;max-width:180px;
+    touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+  }
+  .nav-btn:active{transform:scale(.97);}
+  .nav-btn:disabled{opacity:.22;cursor:not-allowed;transform:none;box-shadow:none;}
+  .nav-btn.primary{
+    color:#000;
+    background:linear-gradient(135deg,#E8C06A 0%,#C9963A 60%,#A87928 100%);
+    border-color:transparent;
+    box-shadow:0 6px 26px rgba(201,150,58,.45),0 2px 8px rgba(0,0,0,.6);
+  }
+
+  /* ── RESULTS ── */
+  .result-title{
+    font-family:'Cinzel',serif;font-size:clamp(9px,2.5vw,11px);
+    letter-spacing:4px;color:rgba(201,150,58,.4);
+    margin-bottom:18px;text-transform:uppercase;text-align:center;width:100%;
+  }
+  .score-card{
+    width:100%;border:1px solid rgba(201,150,58,.3);border-radius:18px;
+    background:rgba(201,150,58,.04);
+    padding:clamp(18px,5vw,28px) clamp(16px,5vw,24px);
+    box-shadow:0 8px 40px rgba(0,0,0,.7),inset 0 1px 0 rgba(201,150,58,.1);
+    margin-bottom:22px;text-align:center;
+  }
+  .score-label{
+    font-family:'Cinzel',serif;font-size:clamp(8px,2vw,9px);
+    letter-spacing:4px;color:rgba(201,150,58,.38);
+    text-transform:uppercase;margin-bottom:8px;
+  }
+  .score-number{
+    font-family:'Cinzel Decorative',serif;
+    font-size:clamp(44px,14vw,58px);font-weight:700;
+    color:#C9963A;line-height:1;
+    text-shadow:0 0 40px rgba(201,150,58,.5);
+  }
+  .score-denom{
+    font-family:'Cormorant Garamond',serif;
+    font-size:clamp(15px,4vw,18px);color:rgba(201,150,58,.35);margin-left:4px;
+  }
+  .score-bar-wrap{width:100%;margin-top:16px;}
+  .score-bar-track{width:100%;height:4px;background:rgba(201,150,58,.1);border-radius:2px;overflow:hidden;}
+  .score-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#A87928,#E8C06A);transition:width 1.2s cubic-bezier(.22,1,.36,1);width:0%;}
+  .score-divider{width:min(120px,35vw);height:1px;background:linear-gradient(90deg,transparent,rgba(201,150,58,.4),transparent);margin:14px auto;}
+  .verdict-badge{
+    display:inline-block;margin-bottom:8px;
+    font-family:'Cinzel',serif;font-size:clamp(8px,2vw,9px);
+    letter-spacing:2px;text-transform:uppercase;
+    padding:5px 14px;border-radius:20px;
+    border:1px solid rgba(201,150,58,.35);color:rgba(201,150,58,.55);
+  }
+  .score-verdict{
+    font-family:'Cinzel',serif;
+    font-size:clamp(15px,4.5vw,18px);letter-spacing:1px;
+    color:#C9963A;margin-bottom:8px;line-height:1.3;
+  }
+  .score-description{
+    font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;
+    font-size:clamp(14px,3.8vw,15px);color:rgba(232,192,106,.6);
+    line-height:1.85;max-width:380px;margin:0 auto;
+  }
+
+  .answers-title{
+    font-family:'Cinzel',serif;font-size:clamp(8px,2.2vw,10px);
+    letter-spacing:4px;color:rgba(201,150,58,.35);
+    text-transform:uppercase;margin-bottom:14px;text-align:center;width:100%;
+  }
+  .answer-card{
+    width:100%;border:1px solid rgba(201,150,58,.15);border-radius:14px;
+    margin-bottom:10px;overflow:hidden;background:rgba(201,150,58,.02);
+    box-shadow:0 4px 20px rgba(0,0,0,.6);
+    animation:riseIn .4s ease forwards;opacity:0;
+  }
+  .answer-q{
+    padding:10px 14px;background:rgba(201,150,58,.05);
+    border-bottom:1px solid rgba(201,150,58,.1);
+    display:flex;align-items:flex-start;gap:10px;
+  }
+  .answer-q-num{font-family:'Cinzel',serif;font-size:10px;color:rgba(201,150,58,.4);min-width:22px;padding-top:2px;flex-shrink:0;}
+  .answer-q-text{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(12px,3.2vw,13px);color:rgba(232,192,106,.5);line-height:1.5;}
+  .answer-choice{
+    padding:10px 14px;display:flex;
+    align-items:center;justify-content:space-between;gap:10px;
+  }
+  .answer-choice-left{display:flex;align-items:flex-start;gap:10px;flex:1;min-width:0;}
+  .answer-letter{font-family:'Cinzel',serif;font-size:11px;color:#C9963A;min-width:22px;flex-shrink:0;}
+  .answer-text{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(13px,3.5vw,14px);color:rgba(232,192,106,.78);line-height:1.5;text-transform:capitalize;word-break:break-word;}
+  .answer-pts{
+    font-family:'Cinzel',serif;font-size:clamp(9px,2.2vw,10px);letter-spacing:.5px;
+    color:#C9963A;white-space:nowrap;
+    background:rgba(201,150,58,.1);border:1px solid rgba(201,150,58,.25);
+    padding:3px 9px;border-radius:20px;flex-shrink:0;
+  }
+
+  .restart-btn{
+    font-family:'Cinzel',serif;font-size:clamp(10px,2.8vw,11px);
+    letter-spacing:3px;color:#000;
+    background:linear-gradient(135deg,#E8C06A 0%,#C9963A 60%,#A87928 100%);
+    border:none;padding:14px clamp(24px,7vw,44px);
+    cursor:pointer;border-radius:40px;margin-top:24px;
+    transition:transform .3s,box-shadow .3s;text-transform:uppercase;
+    box-shadow:0 8px 32px rgba(201,150,58,.45),0 2px 8px rgba(0,0,0,.7);
+    width:min(260px,75vw);
+    touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+  }
+  .restart-btn:hover{transform:translateY(-3px);box-shadow:0 14px 44px rgba(201,150,58,.6);}
+  .restart-btn:active{transform:scale(.97);}
+
+  .fade-in{animation:riseIn .5s ease forwards;}
+</style>
+
+<div id="app">
+  <div class="stars" id="stars"></div>
+  <div class="content">
+
+    <div id="phase-intro" style="display:flex;flex-direction:column;align-items:center;width:100%;" class="fade-in">
+      <svg class="eye-svg" viewBox="0 0 120 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="60" cy="36" rx="52" ry="26" stroke="#C9963A" stroke-width="1.2" fill="none"/>
+        <circle cx="60" cy="36" r="11" stroke="#C9963A" stroke-width="1.2" fill="rgba(201,150,58,0.07)"/>
+        <circle cx="60" cy="36" r="4.5" fill="#C9963A"/>
+        <path d="M60 62 L56 70 L60 66 L64 70 Z" fill="#C9963A" opacity="0.55"/>
+        <path d="M10 36 Q22 18 38 27" stroke="#C9963A" stroke-width="0.9" fill="none" opacity="0.45"/>
+        <path d="M110 36 Q98 18 82 27" stroke="#C9963A" stroke-width="0.9" fill="none" opacity="0.45"/>
+      </svg>
+      <div class="title-main">The Journey<br>of Forgetting</div>
+      <div class="title-sub">𓂀 · A Reckoning of Souls · 𓂀</div>
+      <div class="gold-line"></div>
+      <p class="intro-text">You have crossed the threshold.<br>Seven gates await. Seven truths must be spoken.<br>Before Anubis, you cannot lie —<br>not even to yourself.</p>
+      <button class="begin-btn" onclick="beginJourney()">Enter the Underworld</button>
+    </div>
+
+    <div id="phase-numbers" class="q-numbers-phase">
+      <div class="phase-label">The Fates Have Chosen Your Questions</div>
+      <div class="numbers-grid" id="numbers-grid"></div>
+      <button class="proceed-btn" onclick="beginQuiz()">𓂋 · Face the Questions · 𓂋</button>
+    </div>
+
+    <div id="phase-quiz" class="quiz-phase">
+      <div class="progress-row" id="progress-row"></div>
+      <div class="q-section-label" id="q-section-label"></div>
+      <div class="q-number-display" id="q-num-display"></div>
+      <div class="q-text" id="q-text"></div>
+      <p class="no-answer-msg" id="no-answer-msg">The scales require your answer before you may proceed.</p>
+      <div class="choices-list" id="choices-list"></div>
+      <div class="nav-row">
+        <button class="nav-btn" id="btn-prev" onclick="prevQ()">← Back</button>
+        <button class="nav-btn primary" id="btn-next" onclick="nextQ()">Continue →</button>
+      </div>
+    </div>
+
+    <div id="phase-results" class="results-phase">
+      <div class="result-title">𓂀 · The Verdict of Anubis · 𓂀</div>
+      <div class="score-card">
+        <div class="score-label">Your Soul Weighs</div>
+        <div><span class="score-number" id="score-num">0</span><span class="score-denom" id="score-denom"></span></div>
+        <div class="score-bar-wrap"><div class="score-bar-track"><div class="score-bar-fill" id="score-bar"></div></div></div>
+        <div class="score-divider"></div>
+        <div class="verdict-badge" id="verdict-badge"></div>
+        <div class="score-verdict" id="score-verdict"></div>
+        <div class="score-description" id="score-desc"></div>
+      </div>
+      <div class="answers-title">Your Answers Recorded</div>
+      <div id="results-list" style="width:100%;"></div>
+      <button class="restart-btn" onclick="restart()">𓆣 Begin Again 𓆣</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const QUESTIONS={
+  1:{section:"Section I · The Gates of Forgetting",text:"As you enter the desert of the afterlife, you briefly see a figure in the distance. When you look again, it is gone. What do you do?",choices:["A","B","C"],texts:["Ignore it and keep walking forward.","Walk toward where the figure appeared.","Stop and wait to see if it returns."],points:[1,3,3]},
+  2:{section:"Section I · The Gates of Forgetting",text:"While walking, you hear footsteps behind you, but when you turn around, no one is there. What do you do?",choices:["A","B","C"],texts:["Continue walking.","Turn around and search for who made the sound.","Pause, then continue carefully."],points:[1,3,3]},
+  3:{section:"Section I · The Gates of Forgetting",text:"You pass by an old gate. A smell from it reminds you of something from your life, but you cannot remember what. What do you do?",choices:["A","B","C"],texts:["Ignore it and move on.","Stop and try to remember.","Notice it, then continue your journey."],points:[1,3,3]},
+  4:{section:"Section II · The Weavers' Chamber",text:"Before you die, you may complete one of these: apologize to someone you wronged, tell someone you love them, or finally forgive yourself. Which do you choose?",choices:["A","B","C","D","E"],texts:["Apologize to someone I wronged.","Tell someone I love them.","Finally forgive myself.","Prove I was right all along.","Finish something easy. Just to feel done."],points:[3,3,3,1,2]},
+  5:{section:"Section II · The Weavers' Chamber",text:"The things you leave unfinished — how do you carry them?",choices:["A","B","C"],texts:["Regret. Mourn them forever.","Nothing. Don't think about them.","Teachers. They showed me what mattered."],points:[2,1,3]},
+  6:{section:"Section III · The Hall of Echoes",text:"The last words someone said to you before they died. Why do you still replay them?",choices:["A","B","C"],texts:["I don't need to. I let the words rest.","Because if I forget them, I lose that person again.","To search for something I missed the first time."],points:[3,3,1]},
+  7:{section:"Section III · The Hall of Echoes",text:"The single day that changed who you are. Do you travel back to it in your mind?",choices:["A","B","C"],texts:["Yes. I go there often. It comforts me.","No. I can't look. It still wounds me.","Yes, but as a student, not a prisoner."],points:[3,2,3]},
+  8:{section:"Section III · The Hall of Echoes",text:"A promise you made and broke. No one else remembers. What do you carry instead?",choices:["A","B","C"],texts:["Forgiveness. I let it go.","Guilt. I deserve to feel it.","Action. I make it right now."],points:[3,1,3]},
+  9:{section:"Section IV · The Chamber of the Body",text:"You walk into a room and freeze. You cannot remember why you came here. What does your body do?",choices:["A","B","C"],texts:["I leave. The memory may come back later.","I stand still until the memory returns.","I walk back to find where I started."],points:[3,3,1]},
+  10:{section:"Section IV · The Chamber of the Body",text:"You perform a routine task without conscious thought. You could not explain how. What does your body know that your mind does not?",choices:["A","B","C"],texts:["Nothing important. The knowledge is trivial.","I have hidden something from myself. This troubles me.","Some knowledge does not need words. I accept this."],points:[1,3,3]},
+  11:{section:"Section IV · The Chamber of the Body",text:"You arrive somewhere and realize you remember nothing of the journey. Your body completed the task alone. What does your body believe about this path?",choices:["A","B","C"],texts:["This path needs no attention. This is normal.","I am troubled by how much of my life I miss.","My body carried me while my mind rested. That is a gift."],points:[3,1,3]},
+  12:{section:"Section V · The Lake of Tears",text:"A moment of perfect happiness. You have returned to this memory many times to escape pain. What does this memory mean to you now?",choices:["A","B","C"],texts:["Let it go. The past cannot save you from the present.","Hold it tight. Without this memory, you have nothing.","You see now that you have spent your life trying to feel this way again."],points:[3,1,3]},
+  13:{section:"Section V · The Lake of Tears",text:"Someone betrayed you. The anger still burns as hot as the day it happened. What do you do with this rage?",choices:["A","B","C"],texts:["Let it go. The anger hurts you more than it hurts them.","Keep it. If you forget the pain, you will be fooled again.","Feel it without acting on it. That is how you stay in control."],points:[3,1,3]},
+  14:{section:"Section V · The Lake of Tears",text:"A fear you have carried for years. You cannot remember when it started. It simply lives in you. What do you do with this fear?",choices:["A","B","C"],texts:["Accept it. Fear is not weakness. It is part of life.","Fight it. You will not be ruled by something you cannot name.","Find where it came from. Somewhere, something taught you to be afraid."],points:[3,1,3]},
+  15:{section:"Section VI · The Temple of the Knotted Rope",text:"There is a memory you have locked away. The door is heavy and the key is gone. What did it cost you to lock this memory away?",choices:["A","B","C"],texts:["I cannot say. The lock stays.","It cost me my ability to trust other people.","I wonder now if the lock itself is heavier than the memory."],points:[1,3,3]},
+  16:{section:"Section VI · The Temple of the Knotted Rope",text:"You keep hurting yourself in the same way. The same kind of person. The same kind of collapse. You cannot understand why. What do you do?",choices:["A","B","C"],texts:["There is no pattern. You are imagining it.","You see the pattern for the first time. It is unmistakable.","You ask someone for help. You cannot break this alone."],points:[1,3,3]},
+  17:{section:"Section VI · The Temple of the Knotted Rope",text:"Someone who loves you asks about your past. They have earned the truth. But telling them would change everything. What do you do?",choices:["A","B","C"],texts:["You say nothing. Some truths are too heavy to share.","You tell them everything. They deserve to know who you really are.","You tell them a little. Enough to be honest, not enough to lose them."],points:[1,3,3]},
+  18:{section:"Section VII · The Hall of Judgment",text:"You stand before Anubis. He holds a mirror that shows the person you became because of your memories. What do you see?",choices:["A","B","C"],texts:["I see someone who survived. But survival left scars I cannot hide.","I see a stranger. I have forgotten more of myself than I remember.","I see someone who learned. The wounds became wisdom. The joys became fuel."],points:[3,1,3]},
+  19:{section:"Section VII · The Hall of Judgment",text:"Anubis offers to soften your sharpest memories — the worst pain, the deepest shame. They would fade to a manageable ache. But no longer fully true. What do you choose?",choices:["A","B","C"],texts:["Keep them sharp. The truth must be preserved, even when it wounds.","Soften them. I am tired of carrying pain that serves no purpose.","I do not trust this offer. Nothing is free in the underworld."],points:[3,1,3]},
+  20:{section:"Section VII · The Hall of Judgment",text:"Anubis asks: Which memory would you erase completely if you could? Not soften. Not hide. Erase. As if it never happened. What do you name?",choices:["A","B","C"],texts:["I name nothing. Even the worst memory made me who I am.","I name it. There is one. I would give anything to unlive that moment.","I cannot name it. I have buried it so deep that even the name is lost to me."],points:[3,1,3]}
+};
+
+const SECTIONS=[[1,2,3],[4,5],[6,7,8],[9,10,11],[12,13,14],[15,16,17],[18,19,20]];
+let selectedNums=[],currentQ=0,answers={};
+
+function makeStars(){
+  const c=document.getElementById('stars');
+  for(let i=0;i<55;i++){
+    const s=document.createElement('div');s.className='star';
+    const sz=Math.random()*1.6+0.5;
+    s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;animation-delay:${Math.random()*4}s;animation-duration:${2+Math.random()*3}s;opacity:.05`;
+    c.appendChild(s);
+  }
+}
+
+function pick(a){return a[Math.floor(Math.random()*a.length)];}
+function pickQuestions(){selectedNums=SECTIONS.map(s=>pick(s));selectedNums.sort((a,b)=>a-b);}
+
+function show(id){
+  ['phase-intro','phase-numbers','phase-quiz','phase-results'].forEach(p=>{
+    const el=document.getElementById(p);el.style.display='none';el.classList.remove('fade-in');
+  });
+  const el=document.getElementById(id);
+  el.style.display='flex';void el.offsetWidth;el.classList.add('fade-in');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function beginJourney(){
+  pickQuestions();
+  const grid=document.getElementById('numbers-grid');grid.innerHTML='';
+  selectedNums.forEach((n,i)=>{
+    const c=document.createElement('div');c.className='num-card';
+    c.style.animationDelay=(i*.1)+'s';
+    c.innerHTML=`<span class="num">${n}</span><span class="num-label">Q ${n}</span>`;
+    grid.appendChild(c);
+  });
+  show('phase-numbers');
+}
+
+function beginQuiz(){currentQ=0;show('phase-quiz');renderQ();}
+
+function renderQ(){
+  const qNum=selectedNums[currentQ],q=QUESTIONS[qNum];
+  document.getElementById('q-section-label').textContent=q.section;
+  document.getElementById('q-num-display').textContent=qNum;
+  document.getElementById('q-text').textContent=q.text;
+  document.getElementById('no-answer-msg').classList.remove('show');
+
+  const pr=document.getElementById('progress-row');pr.innerHTML='';
+  selectedNums.forEach((_,i)=>{
+    const d=document.createElement('div');
+    d.className='progress-dot'+(i<currentQ?' done':i===currentQ?' active':'');
+    pr.appendChild(d);
+  });
+
+  const cl=document.getElementById('choices-list');cl.innerHTML='';
+  const sel=answers[qNum];
+  q.choices.forEach((letter,i)=>{
+    const btn=document.createElement('button');
+    btn.className='choice-btn'+(sel===letter?' selected':'');
+    btn.innerHTML=`<span class="choice-letter">${letter}</span><span class="choice-text">${q.texts[i]}</span><span class="choice-check"></span>`;
+    btn.onclick=()=>selectChoice(qNum,letter,btn);
+    cl.appendChild(btn);
+  });
+
+  document.getElementById('btn-prev').disabled=currentQ===0;
+  document.getElementById('btn-next').textContent=currentQ===selectedNums.length-1?'Face Judgment →':'Continue →';
+}
+
+function selectChoice(qNum,letter,btn){
+  answers[qNum]=letter;
+  document.querySelectorAll('.choice-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('no-answer-msg').classList.remove('show');
+}
+
+function nextQ(){
+  if(!answers[selectedNums[currentQ]]){document.getElementById('no-answer-msg').classList.add('show');return;}
+  if(currentQ<selectedNums.length-1){currentQ++;renderQ();}
+  else showResults();
+}
+function prevQ(){if(currentQ>0){currentQ--;renderQ();}}
+
+function calcScore(){
+  return selectedNums.reduce((s,n)=>{
+    const q=QUESTIONS[n],idx=q.choices.indexOf(answers[n]);
+    return s+(idx>=0?q.points[idx]:0);
+  },0);
+}
+function getMaxScore(){return selectedNums.reduce((s,n)=>s+Math.max(...QUESTIONS[n].points),0);}
+
+function getDominant(){
+  const cnt={1:0,2:0,3:0};
+  selectedNums.forEach(n=>{
+    const q=QUESTIONS[n],idx=q.choices.indexOf(answers[n]);
+    if(idx>=0){const p=q.points[idx];cnt[p]=(cnt[p]||0)+1;}
+  });
+  if(cnt[3]>=cnt[2]&&cnt[3]>=cnt[1])return 3;
+  if(cnt[2]>=cnt[1])return 2;
+  return 1;
+}
+
+const VERDICTS={
+  1:{badge:"The Keeper",title:"The Heavy Heart",desc:"Ammit devours you. You are trapped in the past — clinging to what was, unable to release what no longer serves you. The scales tip. The heart is heavy. You do not pass."},
+  2:{badge:"The Lost",title:"The Hollow Heart",desc:"You wander the Duat forever, a shade without a story. Neither anchored to the past nor free from it, you drift between what was and what could have been. Neither forgotten nor remembered."},
+  3:{badge:"The Integrated",title:"The Balanced Heart",desc:"You pass into eternity, finally free. Your heart, weighed against the feather of Ma'at, is found equal. You have carried your memories without being crushed by them. The gates open."}
+};
+
+function showResults(){
+  show('phase-results');
+  const score=calcScore(),maxScore=getMaxScore(),verdict=VERDICTS[getDominant()];
+  document.getElementById('score-num').textContent=score;
+  document.getElementById('score-denom').textContent='/ '+maxScore;
+  document.getElementById('verdict-badge').textContent=verdict.badge;
+  document.getElementById('score-verdict').textContent=verdict.title;
+  document.getElementById('score-desc').textContent=verdict.desc;
+  setTimeout(()=>{document.getElementById('score-bar').style.width=Math.round(score/maxScore*100)+'%';},200);
+
+  const list=document.getElementById('results-list');list.innerHTML='';
+  selectedNums.forEach((n,i)=>{
+    const q=QUESTIONS[n],ans=answers[n],idx=q.choices.indexOf(ans),pts=q.points[idx];
+    const card=document.createElement('div');
+    card.className='answer-card';card.style.animationDelay=(i*.07)+'s';
+    card.innerHTML=`<div class="answer-q"><span class="answer-q-num">Q${n}</span><span class="answer-q-text">${q.text}</span></div><div class="answer-choice"><div class="answer-choice-left"><span class="answer-letter">${ans}</span><span class="answer-text">${q.texts[idx]}</span></div><span class="answer-pts">+${pts}pt${pts!==1?'s':''}</span></div>`;
+    list.appendChild(card);
+  });
+}
+
+function restart(){answers={};currentQ=0;show('phase-intro');}
+makeStars();
+</script>
